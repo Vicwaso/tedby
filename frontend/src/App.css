@@ -1,0 +1,314 @@
+:root{
+  --bg:#0b1220;
+  --card:#111b2e;
+  --card2:#0f1a2b;
+  --text:#eaf0ff;
+  --muted:#9fb0d0;
+  --line:rgba(255,255,255,.08);
+  --primary:#4da3ff;
+  --primary2:#30d59a;
+  --danger:#ff5b6e;
+  --shadow: 0 18px 45px rgba(0,0,0,.35);
+  --radius:18px;
+}
+
+*{ box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background:
+    radial-gradient(1200px 700px at 15% -10%, rgba(77,163,255,.35), transparent 60%),
+    radial-gradient(900px 600px at 100% 0%, rgba(48,213,154,.25), transparent 55%),
+    var(--bg);
+  color: var(--text);
+}
+
+.wrap{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px 14px;
+}
+
+.card{
+  width:100%;
+  max-width:520px;
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border:1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+
+.header{
+  padding:20px 18px 14px;
+  background: linear-gradient(180deg, rgba(77,163,255,.16), rgba(0,0,0,0));
+  border-bottom:1px solid var(--line);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{
+  width:36px;
+  height:36px;
+  border-radius:12px;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  box-shadow: 0 10px 25px rgba(77,163,255,.25);
+}
+
+.h1{
+  font-size:18px;
+  margin:0;
+  letter-spacing:.3px;
+}
+
+.sub{
+  margin:8px 0 0;
+  color: var(--muted);
+  font-size:13px;
+  line-height:1.4;
+}
+
+.body{
+  padding:16px 18px 18px;
+}
+
+.steps{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.pill{
+  flex:1;
+  padding:8px 10px;
+  border-radius:999px;
+  background: rgba(255,255,255,.05);
+  border:1px solid var(--line);
+  color: var(--muted);
+  font-size:12px;
+  text-align:center;
+}
+
+.pill.on{
+  background: rgba(77,163,255,.16);
+  border-color: rgba(77,163,255,.35);
+  color: var(--text);
+}
+
+.alert{
+  margin-bottom:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,91,110,.35);
+  background: rgba(255,91,110,.12);
+  color: #ffd3d8;
+  font-size:13px;
+}
+
+.grid{
+  display:grid;
+  gap:12px;
+}
+
+label{
+  display:block;
+  font-size:12px;
+  color: var(--muted);
+  margin:0 0 6px;
+}
+
+.input{
+  width:100%;
+  padding:12px 12px;
+  border-radius:14px;
+  background: rgba(255,255,255,.04);
+  border:1px solid var(--line);
+  color: var(--text);
+  outline:none;
+}
+
+.input:focus{
+  border-color: rgba(77,163,255,.55);
+  box-shadow: 0 0 0 4px rgba(77,163,255,.14);
+}
+
+.hint{
+  margin:8px 0 0;
+  font-size:12px;
+  color: var(--muted);
+}
+
+.btnRow{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+
+.btn{
+  width:100%;
+  padding:12px 12px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.05);
+  color: var(--text);
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btnPrimary{
+  background: linear-gradient(135deg, rgba(77,163,255,.9), rgba(48,213,154,.85));
+  border: none;
+}
+
+.btn:disabled{
+  opacity:.65;
+  cursor:not-allowed;
+}
+
+.bigName{
+  font-size:22px;
+  font-weight:800;
+  margin: 10px 0 6px;
+  letter-spacing:.5px;
+}
+
+.kpi{
+  padding:14px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background: rgba(255,255,255,.04);
+}
+
+.kpiTitle{
+  font-size:12px;
+  color: var(--muted);
+  margin:0 0 8px;
+}
+
+.pin{
+  font-size:26px;
+  font-weight:900;
+  letter-spacing: 1px;
+  margin:0;
+}
+
+.link{
+  display:inline-block;
+  margin-top:12px;
+  color: var(--primary);
+  text-decoration:none;
+  font-weight:600;
+}
+
+.footer{
+  margin-top:14px;
+  font-size:11px;
+  color: var(--muted);
+  line-height:1.4;
+  border-top:1px solid var(--line);
+  padding-top:12px;
+}
+
+/* =========================
+   MOBILE FIRST FIXES
+   ========================= */
+
+/* Make the main wrapper truly center on all screens */
+.wrap{
+  width: 100%;
+  min-height: 100vh;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card should fill nicely on phones */
+.card{
+  width: 100%;
+  max-width: 520px;
+}
+
+/* Better spacing on smaller screens */
+@media (max-width: 520px){
+  .wrap{
+    padding: 12px;
+    align-items: flex-start; /* so it starts near top like mobile apps */
+  }
+
+  .card{
+    max-width: 100%;
+    border-radius: 16px;
+  }
+
+  .header{
+    padding: 16px 14px 12px;
+  }
+
+  .body{
+    padding: 14px;
+  }
+
+  .logo{
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+  }
+
+  .h1{
+    font-size: 16px;
+  }
+
+  .sub{
+    font-size: 12px;
+  }
+
+  /* Make the step pills wrap instead of squeezing */
+  .steps{
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill{
+    flex: 1 1 calc(50% - 8px);
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  /* Bigger tap targets */
+  .input{
+    padding: 14px 12px;
+    border-radius: 14px;
+    font-size: 16px; /* prevents iOS zoom on input */
+  }
+
+  .btn{
+    padding: 14px 12px;
+    border-radius: 14px;
+    font-size: 15px;
+  }
+
+  /* Buttons stack better on mobile */
+  .btnRow{
+    flex-direction: column;
+  }
+
+  /* Payment method buttons */
+  .body > div[style*="display: flex"]{
+    flex-direction: column;
+  }
+}
+
+/* Slightly nicer on tablets too */
+@media (min-width: 521px) and (max-width: 900px){
+  .wrap{
+    padding: 20px;
+  }
+}
