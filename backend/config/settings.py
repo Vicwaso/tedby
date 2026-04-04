@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,16 +57,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get('DB_NAME', 'tedby_db'),
-        "USER": os.environ.get('DB_USER', 'tedby_user'),
-        "PASSWORD": os.environ.get('DB_PASSWORD', 'Bishop@1'),
-        "HOST": os.environ.get('DB_HOST', '127.0.0.1'),
-        "PORT": os.environ.get('DB_PORT', '5432'),
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.parse(DATABASE_URL)
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get('DB_NAME', 'tedby_db'),
+            "USER": os.environ.get('DB_USER', 'tedby_user'),
+            "PASSWORD": os.environ.get('DB_PASSWORD', 'Bishop@1'),
+            "HOST": os.environ.get('DB_HOST', '127.0.0.1'),
+            "PORT": os.environ.get('DB_PORT', '5432'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
