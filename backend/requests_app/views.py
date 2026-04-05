@@ -1,7 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.db import transaction
+import requests
+import base64
+import os
 
 from .models import KraRequest, RequestStatus
 from .serializers import InitRequestSerializer
@@ -12,12 +14,49 @@ from requests_app.utils import generated_email
 from certificates.pdf import build_pin_certificate_pdf
 
 
-# TEMP: stub KRA lookup (we replace with real KRA API next)
-def kra_lookup_stub(id_number: str) -> dict:
+def get_kra_token():
+    consumer_key = os.environ.get("GAVA_CONSUMER_KEY")
+    consumer_secret = os.environ.get("GAVA_CONSUMER_SECRET")
+
+    credentials = f"{consumer_key}:{consumer_secret}"
+    encoded = base64.b64encode(credentials.encode()).decode()
+
+    response = requests.get(
+        "https://sbx.kra.go.ke/v1/token/generate?grant_type=client_credentials",
+        headers={"Authorization": f"Basic {encoded}"},
+        timeout=10
+    )
+    response.raise_for_status()
+    return response.json()["access_token"]
+
+
+def kra_lookup(id_number: str) -> dict:
+    token = get_kra_token()
+
+    response = requests.post(
+        "https://sbx.kra.go.ke/checker/v1/pin",
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}"
+        },
+        json={
+            "TaxpayerType": "KE",
+            "TaxpayerID": id_number
+        },
+        timeout=10
+    )
+
+    data = response.json()
+
+    if "ErrorCode" in data or "errorCode" in data:
+        error = data.get("ErrorMessage") or data.get("errorMessage", "ID not found")
+        raise ValueError(error)
+
     return {
-        "full_name": "CHRISTINE MBEKE KILUNGU",
-        "pin": "A123456789B"
+        "full_name": data["TaxpayerName"].upper(),
+        "pin": data["TaxpayerPIN"]
     }
+
 
 @api_view(["POST"])
 def init_request(request):
@@ -27,15 +66,18 @@ def init_request(request):
     id_number = ser.validated_data["idNumber"].strip()
     first_name = ser.validated_data["firstName"].strip().upper()
 
-    # Validation: digits only, max 10
     if not id_number.isdigit() or len(id_number) > 10:
         return Response({"message": "Invalid ID format"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # KRA lookup (stub for now)
-    kra = kra_lookup_stub(id_number)
-    full_name = kra["full_name"].upper()
+    try:
+        kra = kra_lookup(id_number)
+    except ValueError as e:
+        return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception:
+        return Response({"message": "KRA lookup failed. Please try again."}, status=status.HTTP_502_BAD_GATEWAY)
 
-    # First-name-only match
+    full_name = kra["full_name"]
+
     if not full_name.startswith(first_name):
         return Response({"message": "First name does not match our records."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -58,6 +100,7 @@ def init_request(request):
         "status": obj.status
     })
 
+
 @api_view(["POST"])
 def confirm_request(request, request_id: int):
     try:
@@ -72,6 +115,7 @@ def confirm_request(request, request_id: int):
     obj.save(update_fields=["status", "updated_at"])
 
     return Response({"requestId": obj.id, "status": obj.status})
+
 
 @api_view(["GET"])
 def request_result(request, request_id: int):
@@ -94,6 +138,7 @@ def request_result(request, request_id: int):
         "certificateUrl": f"/api/requests/{obj.id}/certificate.pdf"
     })
 
+
 @api_view(["GET"])
 def certificate_pdf(request, request_id: int):
     try:
@@ -110,5 +155,3 @@ def certificate_pdf(request, request_id: int):
     resp = HttpResponse(pdf_bytes, content_type="application/pdf")
     resp["Content-Disposition"] = f'attachment; filename="PIN_Certificate_{obj.id}.pdf"'
     return resp
-
-
