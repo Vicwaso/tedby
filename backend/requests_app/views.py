@@ -68,7 +68,7 @@ def init_request(request):
 
     if not id_number.isdigit() or len(id_number) > 10:
         return Response({"message": "Invalid ID format"}, status=status.HTTP_400_BAD_REQUEST)
-
+    '''
     try:
         kra = kra_lookup(id_number)
     except ValueError as e:
@@ -82,7 +82,17 @@ def init_request(request):
         return Response({"message": "First name does not match our records."}, status=status.HTTP_400_BAD_REQUEST)
 
     masked = mask_full_name(full_name)
+    '''
+    try:
+    kra = kra_lookup(id_number)
+except ValueError as e:
+    return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+except Exception as e:
+    return Response({"message": f"KRA lookup failed: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
 
+full_name = kra["full_name"]
+# Temporarily return the name so we can see it
+return Response({"debug_name": full_name})
     obj = KraRequest.objects.create(
         id_number=id_number,
         first_name_input=first_name,
