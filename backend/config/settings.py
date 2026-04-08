@@ -121,9 +121,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ================== CORS (THE REAL FIX) ==================
 
-CORS_ALLOWED_ORIGINS = [
-    "https://tedby-frontend.onrender.com",
-]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # ================== CSRF TRUSTED ORIGINS (CRITICAL ON RENDER) ==================
 
